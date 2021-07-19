@@ -1,4 +1,4 @@
-all: kernel.c boot.s
+all: linker.ld kernel.c boot.S
 	gcc -m32 -c kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 	as --32 boot.s -o boot.o
 	ld -m elf_i386 -T linker.ld boot.o kernel.o -o gnu.bin -nostdlib
@@ -9,4 +9,4 @@ all: kernel.c boot.s
 	grub-mkrescue -o gnu.iso rpc_isodir
 
 qemu: gnu.iso
-	qemu-system-i386 -cdrom atos_rpc.iso
+	qemu-system-i386 -cdrom gnu.iso
