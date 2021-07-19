@@ -1,3 +1,12 @@
 all: kernel.c boot.s
 	gcc -m32 -c kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 	as --32 boot.s -o boot.o
+	ld -m elf_i386 -T linker.ld boot.o kernel.o -o gnu.bin -nostdlib
+	grub-file --is-x86-multiboot gnu.bin
+	mkdir -p rpc_isodir/boot/grub
+	cp gnu.bin rpc_isodir/boot/gnu.bin
+	cp grub.cfg rpc_isodir/boot/grub/grub.cfg
+	grub-mkrescue -o gnu.iso rpc_isodir
+
+qemu: gnu.iso
+	qemu-system-i386 -cdrom atos_rpc.iso
